@@ -4,18 +4,30 @@ import TodoContext from '../context/TodoContext';
 
 const SubmitTodo = () => {
 
-    const [ submitInput, setSubmitInput ] = useState('');
+    //Creating useState Hooks for two states that manage initial user input and submitted user input (through ContextObject).
+    const [ submitInput, setSubmitInput ] = useState([]);
     const [ userInput, setUserInput ] = useState('');
 
     const handleOnChange = (e) => {
+        //Setting initial user state.
         setUserInput(e.target.value);
     }
 
     const handleOnSubmit = (e) => {
+        //On submit = preventDefault, set array of submitInput to whatever is in old array, as well as new input.
         e.preventDefault();
         console.log('Submitted:', userInput);
-        setSubmitInput(userInput);
-        setUserInput('');
+        setSubmitInput(oldArray => [...oldArray, userInput]);
+        setUserInput(''); //Erasing field information...
+        console.log(submitInput);
+    }
+
+
+    const handleDelete = (name) => {
+        //This is a callback function to be passed to TodoList for Todo-deletion.
+        setSubmitInput(submitInput.filter(el => el !== name));
+        //Basically, filter the submitted info array for the name of the todo that was added to remove it.
+        //Small bug, the todolist todo's cannot have the same todo's. Chances that that input is rare, but something to consider that is not within the scope/meaning of this project...
     }
 
     return (
@@ -31,7 +43,7 @@ const SubmitTodo = () => {
             </form>
             <div>
                 <TodoContext.Provider value={submitInput}>
-                    <TodoList />
+                    <TodoList handleDelete={handleDelete} />
                 </TodoContext.Provider>
             </div>
         </div>
